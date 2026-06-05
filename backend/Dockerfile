@@ -23,5 +23,8 @@ EXPOSE 5000
 # Set environment
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV DOTNET_RUNNING_IN_CONTAINER=true
+# Optimize for 512MB Render Free Tier to prevent Out Of Memory / Segfault (139)
+ENV DOTNET_gcServer=0
+ENV DOTNET_EnableDiagnostics=0
 
 ENTRYPOINT ["dotnet", "QuizPlatform.dll"]
