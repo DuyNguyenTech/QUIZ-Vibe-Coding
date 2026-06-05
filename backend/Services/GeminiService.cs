@@ -75,7 +75,8 @@ RULES:
             generationConfig = new
             {
                 temperature = 0.1,
-                maxOutputTokens = 8192
+                maxOutputTokens = 8192,
+                responseMimeType = "application/json"
             }
         };
 
@@ -128,11 +129,14 @@ RULES:
     private static string CleanJsonResponse(string response)
     {
         var cleaned = response.Trim();
-
-        // Remove ```json ... ``` wrappers
-        cleaned = Regex.Replace(cleaned, @"^```(?:json)?\s*\n?", "", RegexOptions.Multiline);
-        cleaned = Regex.Replace(cleaned, @"\n?```\s*$", "", RegexOptions.Multiline);
-
-        return cleaned.Trim();
+        var startIndex = cleaned.IndexOf('{');
+        var endIndex = cleaned.LastIndexOf('}');
+        
+        if (startIndex >= 0 && endIndex >= startIndex)
+        {
+            return cleaned.Substring(startIndex, endIndex - startIndex + 1);
+        }
+        
+        return cleaned;
     }
 }
