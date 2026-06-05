@@ -36,7 +36,7 @@ public class GeminiService
             throw new InvalidOperationException("Mã Gemini API key chưa được cấu hình đúng. Vui lòng kiểm tra lại biến môi trường GEMINI_API_KEY trên Render.");
         }
 
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={apiKey}";
+        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={apiKey}";
 
         var systemPrompt = @"You are an expert exam parser. Your task is to analyze the following document text and extract all multiple-choice questions from it.
 
