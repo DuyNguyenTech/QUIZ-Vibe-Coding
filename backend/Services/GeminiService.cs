@@ -73,8 +73,7 @@ RULES:
             generationConfig = new
             {
                 temperature = 0.1,
-                maxOutputTokens = 8192,
-                responseMimeType = "application/json"
+                maxOutputTokens = 8192
             }
         };
 
@@ -154,7 +153,7 @@ RULES:
     }
 
     /// <summary>
-    /// Strip ```json wrappers and other markdown formatting from Gemini response
+    /// Strip ```json wrappers and auto-heal truncated JSON responses
     /// </summary>
     private static string CleanJsonResponse(string response)
     {
@@ -164,7 +163,18 @@ RULES:
         
         if (startIndex >= 0 && endIndex >= startIndex)
         {
-            return cleaned.Substring(startIndex, endIndex - startIndex + 1);
+            cleaned = cleaned.Substring(startIndex, endIndex - startIndex + 1);
+            
+            // Auto-heal truncated JSON
+            int openBraces = cleaned.Count(c => c == '{');
+            int closeBraces = cleaned.Count(c => c == '}');
+            int openBrackets = cleaned.Count(c => c == '[');
+            int closeBrackets = cleaned.Count(c => c == ']');
+            
+            if (openBrackets > closeBrackets) cleaned += new string(']', openBrackets - closeBrackets);
+            if (openBraces > closeBraces) cleaned += new string('}', openBraces - closeBraces);
+            
+            return cleaned;
         }
         
         return cleaned;
