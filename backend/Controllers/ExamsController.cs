@@ -97,7 +97,7 @@ public class ExamsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error during exam upload.");
-            return StatusCode(500, new { error = "An unexpected error occurred. Please try again later." });
+            return StatusCode(500, new { error = $"Lỗi hệ thống: {ex.Message} - {ex.InnerException?.Message}" });
         }
     }
 
