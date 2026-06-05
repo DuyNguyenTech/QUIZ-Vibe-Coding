@@ -75,7 +75,8 @@ static string ConvertPostgresUrl(string url)
     var uri = new Uri(url.Replace("postgres://", "http://").Replace("postgresql://", "http://"));
     var userInfo = uri.UserInfo.Split(':');
     var host = uri.Host;
-    var port = uri.Port > 0 ? uri.Port : 5432;
+    // When using http:// as a placeholder, missing ports default to 80. Postgres default is 5432.
+    var port = (uri.Port == 80 || uri.Port == 443 || uri.Port <= 0) ? 5432 : uri.Port;
     var database = uri.AbsolutePath.TrimStart('/');
     var username = userInfo[0];
     var password = userInfo.Length > 1 ? userInfo[1] : "";
