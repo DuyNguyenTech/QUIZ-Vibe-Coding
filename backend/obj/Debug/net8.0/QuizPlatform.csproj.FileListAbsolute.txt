@@ -114,3 +114,4 @@ D:\QUIZ\backend\obj\Debug\net8.0\refint\QuizPlatform.dll
 D:\QUIZ\backend\obj\Debug\net8.0\QuizPlatform.pdb
 D:\QUIZ\backend\obj\Debug\net8.0\QuizPlatform.genruntimeconfig.cache
 D:\QUIZ\backend\obj\Debug\net8.0\ref\QuizPlatform.dll
+D:\QUIZ\backend\obj\Debug\net8.0\QuizPlatform.sourcelink.json

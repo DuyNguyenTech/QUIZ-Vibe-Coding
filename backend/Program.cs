@@ -12,10 +12,12 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "QuizPlatform API", Version = "v1" });
 });
 
-// Database - PostgreSQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-    ?? "Host=localhost;Port=5432;Database=quizplatform;Username=postgres;Password=postgres";
+// Database - PostgreSQL (handle Render's postgres:// URL format)
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+var connectionString = !string.IsNullOrEmpty(databaseUrl)
+    ? ConvertPostgresUrl(databaseUrl)
+    : builder.Configuration.GetConnectionString("DefaultConnection")
+      ?? "Host=localhost;Port=5432;Database=quizplatform;Username=postgres;Password=postgres";
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -56,15 +58,27 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Enable Swagger in all environments for easier debugging
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowFrontend");
 app.MapControllers();
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Run($"http://0.0.0.0:{port}");
+
+// Helper: Convert Render's postgres:// URI to Npgsql connection string
+static string ConvertPostgresUrl(string url)
+{
+    // Handle postgres:// or postgresql:// format from Render
+    var uri = new Uri(url.Replace("postgres://", "http://").Replace("postgresql://", "http://"));
+    var userInfo = uri.UserInfo.Split(':');
+    var host = uri.Host;
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    var database = uri.AbsolutePath.TrimStart('/');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+
+    return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
