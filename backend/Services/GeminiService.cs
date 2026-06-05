@@ -56,7 +56,8 @@ RULES:
 3. The correct_answer must be one of: ""A"", ""B"", ""C"", ""D"".
 4. If the correct answer is indicated in the document, use it. If not, make your best educated guess.
 5. Return ONLY the JSON. No additional text, no markdown code fences, no explanation.
-6. Preserve the original language of the questions (Vietnamese or English).";
+6. Preserve the original language of the questions (Vietnamese or English).
+7. CRITICAL: DO NOT SUMMARIZE OR SKIP ANY QUESTIONS! You MUST extract EVERY SINGLE question found in the document. If there are 100 questions, output exactly 100 questions. DO NOT STOP GENERATING until the entire document is processed.";
 
         var requestBody = new
         {

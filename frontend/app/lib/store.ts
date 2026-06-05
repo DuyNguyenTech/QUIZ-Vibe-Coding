@@ -77,6 +77,7 @@ export const useQuizStore = create<QuizState>()(
     }),
     {
       name: "quiz-store",
+      version: 1, // Clear corrupted state from previous iterations
       // Only persist answers and examId to survive page reloads
       partialize: (state) => ({
         answers: state.answers,

@@ -279,7 +279,10 @@ export default function ExamPage() {
                   return (
                     <button
                       key={opt.key}
-                      onClick={() => setAnswer(currentQ.id, opt.key)}
+                      onClick={() => {
+                        console.log(`Selecting answer ${opt.key} for question ${currentQ.id}`);
+                        setAnswer(currentQ.id, opt.key);
+                      }}
                       className={`option-btn ${isSelected ? "selected" : ""}`}
                     >
                       <span
