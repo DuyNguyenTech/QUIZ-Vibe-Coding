@@ -36,8 +36,6 @@ public class GeminiService
             throw new InvalidOperationException("Mã Gemini API key chưa được cấu hình đúng. Vui lòng kiểm tra lại biến môi trường GEMINI_API_KEY trên Render.");
         }
 
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={apiKey}";
-
         var systemPrompt = @"You are an expert exam parser. Your task is to analyze the following document text and extract all multiple-choice questions from it.
 
 You MUST return ONLY a valid raw JSON string (no markdown, no explanation, no code fences) that matches this EXACT schema:
@@ -83,15 +81,47 @@ RULES:
         var json = JsonSerializer.Serialize(requestBody);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        _logger.LogInformation("Sending document to Gemini API for parsing...");
+        var modelsToTry = new[] { "gemini-2.5-flash", "gemini-2.0-flash-lite", "gemini-flash-latest" };
+        string responseText = "";
+        bool success = false;
+        Exception lastException = null;
 
-        var response = await _httpClient.PostAsync(url, content);
-        var responseText = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
+        foreach (var model in modelsToTry)
         {
-            _logger.LogError("Gemini API error: {StatusCode} - {Response}", response.StatusCode, responseText);
-            throw new HttpRequestException($"Gemini API returned {response.StatusCode}: {responseText}");
+            try
+            {
+                var url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
+                _logger.LogInformation($"Sending document to Gemini API (Model: {model})...");
+                
+                var response = await _httpClient.PostAsync(url, content);
+                responseText = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    success = true;
+                    break;
+                }
+                
+                _logger.LogWarning($"Gemini API error with {model}: {response.StatusCode} - {responseText}");
+                lastException = new HttpRequestException($"Gemini API returned {response.StatusCode}: {responseText}");
+                
+                // If the error is not 503/429 (like 400 Bad Request), it's a fatal error, don't retry other models
+                if (response.StatusCode != System.Net.HttpStatusCode.ServiceUnavailable && 
+                    response.StatusCode != System.Net.HttpStatusCode.TooManyRequests)
+                {
+                    throw lastException;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                lastException = ex;
+            }
+        }
+
+        if (!success)
+        {
+            _logger.LogError(lastException, "All Gemini models failed or timed out.");
+            throw lastException ?? new InvalidOperationException("Failed to connect to Gemini API.");
         }
 
         // Parse the Gemini response to extract the generated text
