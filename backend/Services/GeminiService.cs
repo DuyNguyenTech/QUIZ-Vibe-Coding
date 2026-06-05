@@ -57,7 +57,8 @@ RULES:
 4. If the correct answer is indicated in the document, use it. If not, make your best educated guess.
 5. Return ONLY the JSON. No additional text, no markdown code fences, no explanation.
 6. Preserve the original language of the questions (Vietnamese or English).
-7. CRITICAL: DO NOT SUMMARIZE OR SKIP ANY QUESTIONS! You MUST extract EVERY SINGLE question found in the document. If there are 100 questions, output exactly 100 questions. DO NOT STOP GENERATING until the entire document is processed.";
+7. CRITICAL: DO NOT SUMMARIZE OR SKIP ANY QUESTIONS! You MUST extract EVERY SINGLE question found in the document. 
+8. DOUBLE CHECK THE END OF THE DOCUMENT: LLMs often accidentally drop the very last question. You must pay special attention to the bottom of the text to ensure the final question is included!";
 
         var requestBody = new
         {

@@ -355,7 +355,7 @@ export default function ExamPage() {
               </div>
 
               {/* Legend */}
-              <div className="mt-5 pt-4 border-t border-border space-y-2 text-xs text-muted-foreground">
+              <div className="mt-5 pt-4 border-t border-border flex flex-col gap-2 text-xs text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded bg-primary" />
                   <span>Đã trả lời</span>

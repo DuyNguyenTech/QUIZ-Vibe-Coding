@@ -33,7 +33,7 @@ export default function HomePage() {
 
             {/* Heading */}
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 animate-slide-up"
+              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-normal mb-6 animate-slide-up"
               style={{ animationDelay: "0.1s" }}
             >
               Biến tài liệu thành{" "}
@@ -56,12 +56,12 @@ export default function HomePage() {
               style={{ animationDelay: "0.3s" }}
             >
               <Link href="/exams/upload" className="btn-primary text-base px-8 py-4 animate-pulse-glow">
-                <Upload className="w-5 h-5" />
+                <Upload size={20} className="w-5 h-5" />
                 Tải đề lên ngay
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight size={20} className="w-5 h-5" />
               </Link>
               <Link href="/exams" className="btn-secondary text-base px-8 py-4">
-                <FileText className="w-5 h-5" />
+                <FileText size={20} className="w-5 h-5" />
                 Xem danh sách đề thi
               </Link>
             </div>
@@ -81,7 +81,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 icon: Brain,
@@ -116,7 +116,7 @@ export default function HomePage() {
                 <div
                   className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-5 transition-transform group-hover:scale-110`}
                 >
-                  <feature.icon className="w-6 h-6 text-white" />
+                  <feature.icon size={24} className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
