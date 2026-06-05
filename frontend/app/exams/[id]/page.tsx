@@ -115,9 +115,13 @@ export default function ExamPage() {
   // Auto-submit when time runs out
   useEffect(() => {
     if (timeRemaining === 0 && exam && !isSubmitted && hydrated) {
-      handleSubmit();
+      // Prevent instant submission on first render by verifying the store state
+      const state = useQuizStore.getState();
+      if (state.examId === examId && state.timeRemaining === 0) {
+        handleSubmit();
+      }
     }
-  }, [timeRemaining, exam, isSubmitted, hydrated, handleSubmit]);
+  }, [timeRemaining, exam, isSubmitted, hydrated, handleSubmit, examId]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

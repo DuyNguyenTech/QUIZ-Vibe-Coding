@@ -34,7 +34,7 @@ public class DocumentExtractorService
 
         var sb = new StringBuilder();
 
-        foreach (var paragraph in body.Elements<Paragraph>())
+        foreach (var paragraph in body.Descendants<Paragraph>())
         {
             var text = paragraph.InnerText;
             if (!string.IsNullOrWhiteSpace(text))
