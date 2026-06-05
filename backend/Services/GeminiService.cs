@@ -26,8 +26,15 @@ public class GeminiService
     /// </summary>
     public async Task<GeminiExamResponse> ParseExamFromTextAsync(string rawText)
     {
-        var apiKey = _configuration["Gemini:ApiKey"]
-            ?? throw new InvalidOperationException("Gemini API key is not configured. Set 'Gemini:ApiKey' in appsettings or environment variables.");
+        // Try to get from direct environment variable first (easier to configure in Render), then fallback to appsettings
+        var apiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY") 
+            ?? Environment.GetEnvironmentVariable("Gemini__ApiKey")
+            ?? _configuration["Gemini:ApiKey"];
+
+        if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "YOUR_GEMINI_API_KEY_HERE")
+        {
+            throw new InvalidOperationException("Mã Gemini API key chưa được cấu hình đúng. Vui lòng kiểm tra lại biến môi trường GEMINI_API_KEY trên Render.");
+        }
 
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={apiKey}";
 
