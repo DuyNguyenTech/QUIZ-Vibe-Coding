@@ -98,3 +98,11 @@ export async function submitAnswers(
   if (!res.ok) throw new Error("Không thể nộp bài");
   return res.json();
 }
+
+export async function deleteExam(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/exams/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) throw new Error("Không thể xoá đề thi");
+}

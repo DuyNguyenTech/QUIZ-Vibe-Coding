@@ -10,8 +10,9 @@ import {
   Upload,
   Loader2,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
-import { getExams, type ExamListItem } from "../lib/api";
+import { getExams, deleteExam, type ExamListItem } from "../lib/api";
 
 export default function ExamsListPage() {
   const [exams, setExams] = useState<ExamListItem[]>([]);
@@ -31,6 +32,22 @@ export default function ExamsListPage() {
     };
     fetchExams();
   }, []);
+
+  const handleDelete = async (e: React.MouseEvent, id: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!confirm("Bạn có chắc chắn muốn xoá đề thi này không? Hành động này không thể hoàn tác.")) {
+      return;
+    }
+
+    try {
+      await deleteExam(id);
+      setExams(exams.filter((exam) => exam.id !== id));
+    } catch (err: any) {
+      alert(err.message || "Không thể xoá đề thi");
+    }
+  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("vi-VN", {
@@ -105,7 +122,7 @@ export default function ExamsListPage() {
             <Link
               key={exam.id}
               href={`/exams/${exam.id}`}
-              className="glass-card p-6 flex items-center justify-between gap-4 group hover:border-primary/30 transition-all duration-300 hover:translate-y-[-2px] block animate-slide-up"
+              className="glass-card p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group hover:border-primary/30 transition-all duration-300 hover:translate-y-[-2px] block animate-slide-up"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -128,11 +145,20 @@ export default function ExamsListPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-sm font-medium hidden sm:inline">
-                  Làm bài
-                </span>
-                <ArrowRight className="w-5 h-5" />
+              <div className="flex items-center gap-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity self-end sm:self-auto">
+                <div className="flex items-center gap-2 text-primary">
+                  <span className="text-sm font-medium hidden sm:inline">
+                    Làm bài
+                  </span>
+                  <ArrowRight className="w-5 h-5" />
+                </div>
+                <button
+                  onClick={(e) => handleDelete(e, exam.id)}
+                  className="p-2.5 rounded-lg bg-danger/10 text-danger hover:bg-danger hover:text-white transition-colors"
+                  title="Xoá đề thi"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             </Link>
           ))}
