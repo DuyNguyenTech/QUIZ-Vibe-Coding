@@ -179,7 +179,26 @@ export default function ExamPage() {
     return <ScoreBoard result={scoreResult} onRetake={handleRetake} />;
   }
 
+  // Prevent out-of-bounds error if state hasn't been reset for the new exam yet
+  if (!hydrated || useQuizStore.getState().examId !== examId) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   const currentQ = exam.questions[currentQuestion];
+
+  // Extra safety net
+  if (!currentQ) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   const answeredCount = Object.keys(answers).length;
 
   return (
