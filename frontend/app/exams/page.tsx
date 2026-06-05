@@ -152,13 +152,13 @@ export default function ExamsListPage() {
                   </span>
                   <ArrowRight className="w-5 h-5" />
                 </div>
-                <button
+                {/* <button
                   onClick={(e) => handleDelete(e, exam.id)}
                   className="p-2.5 rounded-lg bg-danger/10 text-danger hover:bg-danger hover:text-white transition-colors"
                   title="Xoá đề thi"
                 >
                   <Trash2 className="w-4 h-4" />
-                </button>
+                </button> */}
               </div>
             </Link>
           ))}
