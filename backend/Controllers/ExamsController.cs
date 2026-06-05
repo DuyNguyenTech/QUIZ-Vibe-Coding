@@ -92,7 +92,7 @@ public class ExamsController : ControllerBase
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "Gemini API call failed.");
-            return StatusCode(502, new { error = "AI service is temporarily unavailable. Please try again." });
+            return StatusCode(502, new { error = $"Lỗi kết nối AI: {ex.Message}" });
         }
         catch (Exception ex)
         {
