@@ -24,7 +24,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register application services
 builder.Services.AddSingleton<DocumentExtractorService>();
-builder.Services.AddHttpClient<GeminiService>();
+builder.Services.AddHttpClient<GeminiService>(client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(10); // Generous timeout for AI processing of large PDFs
+});
 
 // CORS - Allow any origin for simplicity
 builder.Services.AddCors(options =>
