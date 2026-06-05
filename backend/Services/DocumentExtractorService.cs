@@ -18,9 +18,10 @@ public class DocumentExtractorService
 
         return extension switch
         {
+            ".pdf" => ExtractFromPdf(fileStream),
             ".docx" => ExtractFromDocx(fileStream),
             ".txt" => await ExtractFromTxt(fileStream),
-            _ => throw new NotSupportedException($"File type '{extension}' is not supported. Please upload .docx or .txt files.")
+            _ => throw new NotSupportedException($"File type '{extension}' is not supported. Please upload .pdf, .docx or .txt files.")
         };
     }
 
@@ -60,5 +61,27 @@ public class DocumentExtractorService
             throw new InvalidOperationException("The .txt file is empty.");
 
         return text.Trim();
+    }
+
+    private string ExtractFromPdf(Stream stream)
+    {
+        using var document = UglyToad.PdfPig.PdfDocument.Open(stream);
+        var sb = new StringBuilder();
+
+        foreach (var page in document.GetPages())
+        {
+            var text = page.Text;
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                sb.AppendLine(text);
+            }
+        }
+
+        var result = sb.ToString().Trim();
+
+        if (string.IsNullOrWhiteSpace(result))
+            throw new InvalidOperationException("The .pdf file is empty or contains no extractable text (it might be scanned images).");
+
+        return result;
     }
 }

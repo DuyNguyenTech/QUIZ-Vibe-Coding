@@ -46,7 +46,7 @@ export default function HomePage() {
               className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-slide-up"
               style={{ animationDelay: "0.2s" }}
             >
-              Chỉ cần tải lên file tài liệu (.docx hoặc .txt), AI sẽ tự động
+              Chỉ cần tải lên file tài liệu (.pdf, .docx hoặc .txt), AI sẽ tự động
               phân tích và tạo bộ câu hỏi trắc nghiệm hoàn chỉnh cho bạn.
             </p>
 

@@ -39,11 +39,11 @@ public class ExamsController : ControllerBase
         if (file == null || file.Length == 0)
             return BadRequest(new { error = "No file was uploaded." });
 
-        var allowedExtensions = new[] { ".docx", ".txt" };
+        var allowedExtensions = new[] { ".pdf", ".docx", ".txt" };
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
         if (!allowedExtensions.Contains(extension))
-            return BadRequest(new { error = "Only .docx and .txt files are supported." });
+            return BadRequest(new { error = "Only .pdf, .docx and .txt files are supported." });
 
         try
         {

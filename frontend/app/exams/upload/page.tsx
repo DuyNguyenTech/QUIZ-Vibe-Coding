@@ -15,15 +15,16 @@ export default function UploadPage() {
   const [error, setError] = useState<string | null>(null);
 
   const allowedTypes = [
+    "application/pdf",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "text/plain",
   ];
-  const allowedExtensions = [".docx", ".txt"];
+  const allowedExtensions = [".pdf", ".docx", ".txt"];
 
   const validateFile = (f: File): boolean => {
     const ext = f.name.substring(f.name.lastIndexOf(".")).toLowerCase();
     if (!allowedExtensions.includes(ext)) {
-      setError("Chỉ chấp nhận file .docx hoặc .txt");
+      setError("Chỉ chấp nhận file .pdf, .docx hoặc .txt");
       return false;
     }
     if (f.size > 10 * 1024 * 1024) {
@@ -118,7 +119,7 @@ export default function UploadPage() {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".docx,.txt"
+            accept=".pdf,.docx,.txt"
             className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -142,7 +143,10 @@ export default function UploadPage() {
                   </span>
                 </p>
               </div>
-              <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
+                <span className="px-3 py-1 rounded-full bg-secondary border border-border">
+                  .pdf
+                </span>
                 <span className="px-3 py-1 rounded-full bg-secondary border border-border">
                   .docx
                 </span>
