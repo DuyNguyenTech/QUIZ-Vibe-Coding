@@ -1027,7 +1027,7 @@ function LobbyView({
             {/* Avatar Selector */}
             <div className="flex flex-col items-center gap-3">
               <div className="w-24 h-24 rounded-full bg-background border-4 border-primary/20 overflow-hidden shadow-lg flex items-center justify-center relative group">
-                <Image src={currentAvatarUrl} alt="Avatar" width={96} height={96} />
+                <img src={currentAvatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               </div>
               <button
                 onClick={() => setAvatarSeed(Math.random().toString(36).substring(7))}
