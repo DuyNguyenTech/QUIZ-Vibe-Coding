@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuthStore } from "../../lib/store";
-import { getProfile, updateProfile } from "../../lib/api";
+import { useAuthStore } from "../lib/store";
+import { getProfile, updateProfile } from "../lib/api";
 import { User, Settings, Save, Loader2, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
