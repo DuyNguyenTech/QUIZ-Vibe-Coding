@@ -80,8 +80,8 @@ export default function ProfilePage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in pb-20">
       
       {/* Premium Header/Banner */}
-      <div className="mb-24 relative">
-        <div className="h-56 sm:h-72 w-full rounded-3xl bg-gradient-to-br from-primary via-accent to-blue-600 animate-gradient relative overflow-hidden shadow-2xl border border-white/10">
+      <div className="mb-12">
+        <div className="h-56 sm:h-72 w-full rounded-3xl bg-gradient-to-br from-primary via-accent to-blue-600 animate-gradient relative overflow-hidden shadow-xl border border-white/10">
           {/* Decorative patterns */}
           <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
@@ -90,8 +90,8 @@ export default function ProfilePage() {
         </div>
         
         {/* Avatar & Basic Info */}
-        <div className="absolute -bottom-16 left-0 w-full px-6 sm:px-12 flex flex-col sm:flex-row items-end gap-6">
-          <div className="relative group">
+        <div className="px-6 sm:px-12 flex flex-col sm:flex-row sm:items-end items-center gap-6 -mt-16 sm:-mt-20 relative z-10">
+          <div className="relative group shrink-0">
             <div className="absolute -inset-1.5 bg-gradient-to-r from-primary to-accent rounded-full blur-md opacity-70 group-hover:opacity-100 transition duration-500 animate-pulse-glow"></div>
             <div className="relative flex h-32 w-32 sm:h-40 sm:w-40 items-center justify-center rounded-full bg-card border-4 border-background shadow-2xl overflow-hidden">
               <img 
@@ -105,8 +105,8 @@ export default function ProfilePage() {
             </button>
           </div>
           
-          <div className="pb-2 text-center sm:text-left flex-1 w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+          <div className="pb-0 sm:pb-3 text-center sm:text-left flex-1 w-full mt-4 sm:mt-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
               <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground drop-shadow-md tracking-tight">
                 {formData.nickname || "Người dùng"}
               </h1>
