@@ -1017,8 +1017,8 @@ function LobbyView({
   const currentAvatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${avatarSeed}&backgroundColor=transparent`;
 
   const handleStart = () => {
-    if (!nickname.trim()) return;
-    setLobbyInfo(nickname, currentAvatarUrl);
+    const finalNickname = nickname.trim() || "Học viên ẩn danh";
+    setLobbyInfo(finalNickname, currentAvatarUrl);
     onStart();
   };
 
@@ -1035,7 +1035,7 @@ function LobbyView({
         </p>
 
         <div className="bg-secondary/50 rounded-2xl p-6 border border-border mb-8">
-          <h2 className="text-lg font-semibold mb-4 text-foreground">Hồ sơ người thi</h2>
+          <h2 className="text-lg font-semibold mb-4 text-foreground">Hồ sơ người thi (Không bắt buộc)</h2>
           
           <div className="flex flex-col sm:flex-row gap-6 items-center">
             {/* Avatar Selector */}
@@ -1058,7 +1058,7 @@ function LobbyView({
                 type="text"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
-                placeholder="Nhập tên để hiển thị trên bảng điểm..."
+                placeholder="Học viên ẩn danh"
                 className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
                 maxLength={30}
               />
@@ -1072,7 +1072,6 @@ function LobbyView({
           </button>
           <button 
             onClick={handleStart} 
-            disabled={!nickname.trim()}
             className="btn-primary"
           >
             Bắt đầu thi <ChevronRight className="w-4 h-4" />
