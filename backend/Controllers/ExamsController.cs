@@ -4,6 +4,8 @@ using QuizPlatform.Data;
 using QuizPlatform.DTOs;
 using QuizPlatform.Models;
 using QuizPlatform.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace QuizPlatform.Controllers;
 
@@ -33,6 +35,7 @@ public class ExamsController : ControllerBase
     /// POST /api/exams/upload-exam
     /// </summary>
     [HttpPost("upload-exam")]
+    [Authorize]
     [RequestSizeLimit(10_000_000)] // 10MB limit
     public async Task<IActionResult> UploadExam(IFormFile file)
     {
@@ -57,11 +60,15 @@ public class ExamsController : ControllerBase
             var geminiResult = await _geminiService.ParseExamFromTextAsync(rawText);
 
             // Step 3: Map to EF Core entities and save
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int? createdById = int.TryParse(userIdStr, out int uid) ? uid : null;
+
             var exam = new Exam
             {
                 Title = geminiResult.exam_title,
                 Description = $"Extracted from: {file.FileName}",
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CreatedById = createdById
             };
 
             foreach (var q in geminiResult.questions)
@@ -215,11 +222,24 @@ public class ExamsController : ControllerBase
     /// DELETE /api/exams/{id}
     /// </summary>
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> DeleteExam(int id)
     {
         var exam = await _context.Exams.FindAsync(id);
         if (exam == null)
             return NotFound(new { error = "Exam not found." });
+
+        var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRole = User.FindFirstValue(ClaimTypes.Role);
+
+        if (!int.TryParse(userIdStr, out int userId))
+            return Unauthorized();
+
+        // Allow deletion if user is Admin, or if they created the exam
+        if (userRole != Role.Admin.ToString() && exam.CreatedById != userId)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { error = "Bạn không có quyền xoá đề thi này." });
+        }
 
         _context.Exams.Remove(exam);
         await _context.SaveChangesAsync();

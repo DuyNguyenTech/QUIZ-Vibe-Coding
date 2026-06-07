@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using QuizPlatform.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using QuizPlatform.Models;
 using QuizPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +14,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "QuizPlatform API", Version = "v1" });
+    
+    // Add JWT support in Swagger
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter your JWT token."
+    });
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 // Database - PostgreSQL (handle Render's postgres:// URL format)
@@ -28,6 +57,31 @@ builder.Services.AddHttpClient<GeminiService>(client =>
 {
     client.Timeout = TimeSpan.FromMinutes(10); // Generous timeout for AI processing of large PDFs
 });
+
+// JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["Key"] ?? "ThisIsASecretKeyForQuizAIThatNeedsToBeVeryLongToWorkWithHS256Algorithm";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"] ?? "QuizAI",
+        ValidAudience = jwtSettings["Audience"] ?? "QuizAIUsers",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // CORS - Allow any origin for simplicity
 builder.Services.AddCors(options =>
@@ -48,7 +102,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     try
     {
-        dbContext.Database.EnsureCreated();
+        dbContext.Database.Migrate();
     }
     catch (Exception ex)
     {
@@ -62,6 +116,10 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("AllowFrontend");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";

@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Exam> Exams => Set<Exam>();
     public DbSet<Question> Questions => Set<Question>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,6 +21,11 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Title).IsRequired().HasMaxLength(500);
             entity.Property(e => e.Description).HasMaxLength(2000);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+
+            entity.HasOne(e => e.CreatedBy)
+                  .WithMany(u => u.Exams)
+                  .HasForeignKey(e => e.CreatedById)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Question>(entity =>

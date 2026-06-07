@@ -20,7 +20,8 @@ import {
   PartyPopper,
 } from "lucide-react";
 import { getExam, type ExamDetail } from "../../lib/api";
-import { useQuizStore } from "../../lib/store";
+import { useQuizStore, useAuthStore } from "../../lib/store";
+import Image from "next/image";
 
 export default function ExamPage() {
   const params = useParams();
@@ -42,13 +43,17 @@ export default function ExamPage() {
     currentQuestion,
     timeRemaining,
     isSubmitted,
+    isStarted,
     setAnswer,
     setCurrentQuestion,
     decrementTime,
     setSubmitted,
+    startExam,
     initExam,
     resetQuiz,
   } = useQuizStore();
+
+  const { lobbyNickname, lobbyAvatar, setLobbyInfo, user } = useAuthStore();
 
   // Wait for zustand hydration
   useEffect(() => {
@@ -150,7 +155,7 @@ export default function ExamPage() {
 
   // Countdown timer
   useEffect(() => {
-    if (!exam || isSubmitted || !hydrated || scoreResult?.allAnswered) return;
+    if (!exam || isSubmitted || !hydrated || scoreResult?.allAnswered || !isStarted) return;
 
     timerRef.current = setInterval(() => {
       decrementTime();
@@ -163,13 +168,13 @@ export default function ExamPage() {
 
   // Auto-submit when time runs out
   useEffect(() => {
-    if (timeRemaining === 0 && exam && !isSubmitted && hydrated) {
+    if (timeRemaining === 0 && exam && !isSubmitted && hydrated && isStarted) {
       const state = useQuizStore.getState();
       if (state.examId === examId && state.timeRemaining === 0) {
         handleTimeUp();
       }
     }
-  }, [timeRemaining, exam, isSubmitted, hydrated, handleTimeUp, examId]);
+  }, [timeRemaining, exam, isSubmitted, hydrated, handleTimeUp, examId, isStarted]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -256,6 +261,19 @@ export default function ExamPage() {
   }
 
   const answeredCount = Object.keys(answers).length;
+
+  // Lobby view (before starting)
+  if (!isStarted) {
+    return (
+      <LobbyView
+        exam={exam}
+        onStart={() => startExam()}
+        initialNickname={user?.nickname || user?.email.split("@")[0] || lobbyNickname}
+        initialAvatar={lobbyAvatar}
+        setLobbyInfo={setLobbyInfo}
+      />
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
@@ -955,6 +973,95 @@ function SubmittedView({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Lobby View ────────────────────────────────────────────────────────
+function LobbyView({
+  exam,
+  onStart,
+  initialNickname,
+  initialAvatar,
+  setLobbyInfo,
+}: {
+  exam: ExamDetail;
+  onStart: () => void;
+  initialNickname: string;
+  initialAvatar: string;
+  setLobbyInfo: (n: string, a: string) => void;
+}) {
+  const router = useRouter();
+  const [nickname, setNickname] = useState(initialNickname);
+  const [avatarSeed, setAvatarSeed] = useState(
+    initialAvatar.includes("dicebear") ? initialAvatar.split("seed=")[1]?.split("&")[0] || "quiz" : "quiz"
+  );
+
+  const currentAvatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${avatarSeed}&backgroundColor=transparent`;
+
+  const handleStart = () => {
+    if (!nickname.trim()) return;
+    setLobbyInfo(nickname, currentAvatarUrl);
+    onStart();
+  };
+
+  return (
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+      <div className="glass-card w-full max-w-xl p-8 animate-fade-in text-center">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-6">
+          <BookOpen className="w-8 h-8 text-white" />
+        </div>
+        
+        <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-3">{exam.title}</h1>
+        <p className="text-muted-foreground mb-8">
+          {exam.questions.length} câu hỏi • Thời gian: {Math.ceil(exam.questions.length * 1.5)} phút
+        </p>
+
+        <div className="bg-secondary/50 rounded-2xl p-6 border border-border mb-8">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">Hồ sơ người thi</h2>
+          
+          <div className="flex flex-col sm:flex-row gap-6 items-center">
+            {/* Avatar Selector */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-24 h-24 rounded-full bg-background border-4 border-primary/20 overflow-hidden shadow-lg flex items-center justify-center relative group">
+                <Image src={currentAvatarUrl} alt="Avatar" width={96} height={96} />
+              </div>
+              <button
+                onClick={() => setAvatarSeed(Math.random().toString(36).substring(7))}
+                className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+              >
+                <RotateCcw className="w-3 h-3" /> Đổi Avatar
+              </button>
+            </div>
+
+            {/* Nickname Input */}
+            <div className="flex-1 w-full">
+              <label className="block text-sm font-medium mb-2 text-left text-foreground">Biệt danh của bạn</label>
+              <input
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder="Nhập tên để hiển thị trên bảng điểm..."
+                className="w-full px-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all"
+                maxLength={30}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button onClick={() => router.back()} className="btn-secondary">
+            <ChevronLeft className="w-4 h-4" /> Quay lại
+          </button>
+          <button 
+            onClick={handleStart} 
+            disabled={!nickname.trim()}
+            className="btn-primary"
+          >
+            Bắt đầu thi <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

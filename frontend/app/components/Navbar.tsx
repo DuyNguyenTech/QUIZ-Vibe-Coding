@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Upload, Home } from "lucide-react";
+import { BookOpen, Upload, Home, User, LogOut } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
+import { useAuthStore } from "../lib/store";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -12,6 +15,11 @@ export default function Navbar() {
     { href: "/exams/upload", label: "Tải đề lên", icon: Upload },
     { href: "/exams", label: "Danh sách đề", icon: BookOpen },
   ];
+
+  const { token, user, logout } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
@@ -48,6 +56,50 @@ export default function Navbar() {
                 </Link>
               );
             })}
+
+            <div className="w-px h-6 bg-border mx-2"></div>
+            
+            <ThemeToggle />
+
+            {mounted && (
+              <div className="ml-2">
+                {token && user ? (
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium hover:bg-secondary transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                        {user.nickname ? user.nickname[0].toUpperCase() : user.email[0].toUpperCase()}
+                      </div>
+                      <span className="hidden sm:inline">{user.nickname || user.email.split("@")[0]}</span>
+                    </Link>
+                    <button
+                      onClick={() => logout()}
+                      className="p-2 rounded-xl text-muted-foreground hover:text-danger hover:bg-danger/10 transition-colors"
+                      title="Đăng xuất"
+                    >
+                      <LogOut className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href="/auth/login"
+                      className="px-4 py-2 rounded-xl text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                    >
+                      Đăng nhập
+                    </Link>
+                    <Link
+                      href="/auth/register"
+                      className="px-4 py-2 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
+                    >
+                      Đăng ký
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

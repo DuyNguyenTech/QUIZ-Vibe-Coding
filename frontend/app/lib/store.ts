@@ -14,6 +14,8 @@ interface QuizState {
   isSubmitted: boolean;
   // The exam ID being taken
   examId: number | null;
+  // Whether the exam has actually started (past lobby)
+  isStarted: boolean;
 
   // Actions
   setAnswer: (questionId: number, answer: string) => void;
@@ -21,6 +23,7 @@ interface QuizState {
   setTimeRemaining: (seconds: number) => void;
   decrementTime: () => void;
   setSubmitted: (val: boolean) => void;
+  startExam: () => void;
   initExam: (examId: number, totalQuestions: number, minutesPerQuestion?: number) => void;
   resetQuiz: () => void;
 }
@@ -33,6 +36,7 @@ export const useQuizStore = create<QuizState>()(
       timeRemaining: 0,
       isSubmitted: false,
       examId: null,
+      isStarted: false,
 
       setAnswer: (questionId, answer) =>
         set((state) => ({
@@ -49,6 +53,8 @@ export const useQuizStore = create<QuizState>()(
         })),
 
       setSubmitted: (val) => set({ isSubmitted: val }),
+      
+      startExam: () => set({ isStarted: true }),
 
       initExam: (examId, totalQuestions, minutesPerQuestion = 1.5) => {
         const currentState = get();
@@ -63,6 +69,7 @@ export const useQuizStore = create<QuizState>()(
           currentQuestion: 0,
           timeRemaining: Math.ceil(totalQuestions * minutesPerQuestion * 60),
           isSubmitted: false,
+          isStarted: false,
         });
       },
 
@@ -73,6 +80,7 @@ export const useQuizStore = create<QuizState>()(
           timeRemaining: 0,
           isSubmitted: false,
           examId: null,
+          isStarted: false,
         }),
     }),
     {
@@ -85,7 +93,58 @@ export const useQuizStore = create<QuizState>()(
         timeRemaining: state.timeRemaining,
         isSubmitted: state.isSubmitted,
         examId: state.examId,
+        isStarted: state.isStarted,
       }),
+    }
     }
   )
 );
+
+export interface UserProfile {
+  id: number;
+  email: string;
+  role: string;
+  nickname?: string;
+  gender?: string;
+  status?: string;
+}
+
+interface AuthState {
+  token: string | null;
+  user: UserProfile | null;
+  
+  // Guest/Lobby state
+  lobbyNickname: string;
+  lobbyAvatar: string;
+
+  setAuth: (token: string, user: UserProfile) => void;
+  updateUser: (user: Partial<UserProfile>) => void;
+  logout: () => void;
+  setLobbyInfo: (nickname: string, avatar: string) => void;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      token: null,
+      user: null,
+      lobbyNickname: "",
+      lobbyAvatar: "/avatars/avatar1.png",
+
+      setAuth: (token, user) => set({ token, user }),
+      
+      updateUser: (updates) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updates } : null,
+        })),
+
+      logout: () => set({ token: null, user: null }),
+      
+      setLobbyInfo: (nickname, avatar) => set({ lobbyNickname: nickname, lobbyAvatar: avatar }),
+    }),
+    {
+      name: "auth-store",
+    }
+  )
+);
+

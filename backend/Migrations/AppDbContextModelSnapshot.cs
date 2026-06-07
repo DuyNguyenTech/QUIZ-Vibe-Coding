@@ -35,6 +35,9 @@ namespace QuizPlatform.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
@@ -45,6 +48,8 @@ namespace QuizPlatform.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("Exams");
                 });
@@ -96,6 +101,57 @@ namespace QuizPlatform.Migrations
                     b.ToTable("Questions");
                 });
 
+            modelBuilder.Entity("QuizPlatform.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Nickname")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("QuizPlatform.Models.Exam", b =>
+                {
+                    b.HasOne("QuizPlatform.Models.User", "CreatedBy")
+                        .WithMany("Exams")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CreatedBy");
+                });
+
             modelBuilder.Entity("QuizPlatform.Models.Question", b =>
                 {
                     b.HasOne("QuizPlatform.Models.Exam", "Exam")
@@ -110,6 +166,11 @@ namespace QuizPlatform.Migrations
             modelBuilder.Entity("QuizPlatform.Models.Exam", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("QuizPlatform.Models.User", b =>
+                {
+                    b.Navigation("Exams");
                 });
 #pragma warning restore 612, 618
         }
