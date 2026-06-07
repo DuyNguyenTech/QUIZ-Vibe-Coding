@@ -1035,7 +1035,7 @@ function LobbyView({
         </p>
 
         <div className="bg-secondary/50 rounded-2xl p-6 border border-border mb-8">
-          <h2 className="text-lg font-semibold mb-4 text-foreground">Hồ sơ người thi (Không bắt buộc)</h2>
+          <h2 className="text-lg font-semibold mb-4 text-foreground">Hồ sơ người thi</h2>
           
           <div className="flex flex-col sm:flex-row gap-6 items-center">
             {/* Avatar Selector */}
