@@ -1,6 +1,7 @@
 import { useAuthStore } from "./store";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 
+  (process.env.NODE_ENV === "production" ? "https://quiz-backend-0sud.onrender.com" : "http://localhost:5000");
 
 // --- Base Fetch wrapper to inject token ---
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
