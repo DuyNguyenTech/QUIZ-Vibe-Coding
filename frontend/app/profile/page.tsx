@@ -80,64 +80,48 @@ export default function ProfilePage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in pb-20">
 
       {/* Premium Header/Banner */}
-      <div className="mb-8" style={{ paddingBottom: "80px", position: "relative" }}>
-        {/* Banner */}
-        <div className="w-full rounded-3xl bg-gradient-to-br from-primary via-accent to-blue-600 animate-gradient relative overflow-hidden shadow-xl border border-white/10" style={{ height: "200px" }}>
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
+      <div
+        className="mb-8 w-full rounded-3xl bg-gradient-to-br from-primary via-accent to-blue-600 animate-gradient overflow-hidden shadow-xl border border-white/10"
+      >
+        {/* Top decorative area */}
+        <div style={{ height: "120px", position: "relative" }}>
+          <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "200px", height: "200px", background: "rgba(255,255,255,0.15)", borderRadius: "50%", filter: "blur(40px)" }}></div>
+          <div style={{ position: "absolute", bottom: "-60px", left: "-60px", width: "200px", height: "200px", background: "rgba(255,255,255,0.08)", borderRadius: "50%", filter: "blur(40px)" }}></div>
         </div>
 
-        {/* Avatar + Info row — sits below banner via absolute bottom */}
+        {/* Bottom content area with avatar + info */}
         <div
           style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            padding: "0 32px 24px 32px",
             display: "flex",
-            alignItems: "flex-end",
-            gap: "1.5rem",
-            zIndex: 10,
+            alignItems: "center",
+            gap: "20px",
+            background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
           }}
         >
           {/* Avatar */}
-          <div className="relative group shrink-0">
-            <div className="absolute -inset-1.5 bg-gradient-to-r from-primary to-accent rounded-full blur-md opacity-70 group-hover:opacity-100 transition duration-500 animate-pulse-glow"></div>
-            <div
-              className="relative flex items-center justify-center rounded-full bg-card overflow-hidden shadow-2xl"
-              style={{ width: "120px", height: "120px", border: "4px solid var(--background)" }}
-            >
-              <img
-                src={lobbyAvatar && lobbyAvatar.includes("dicebear") ? lobbyAvatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${user.nickname || user.email}&backgroundColor=transparent`}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <button className="absolute bottom-1 right-1 p-2 bg-primary text-white rounded-full shadow-lg hover:bg-accent transition-colors border-2 border-background">
-              <Edit3 className="w-3.5 h-3.5" />
-            </button>
+          <div style={{ width: "72px", height: "72px", borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", overflow: "hidden", flexShrink: 0 }}>
+            <img
+              src={lobbyAvatar && lobbyAvatar.includes("dicebear") ? lobbyAvatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${user.nickname || user.email}&backgroundColor=transparent`}
+              alt="Avatar"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
           </div>
 
           {/* Name + email */}
-          <div style={{ paddingBottom: "8px", flex: 1 }}>
-            <div className="flex flex-wrap items-center gap-3 mb-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
+              <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "white", margin: 0, lineHeight: 1.3 }}>
                 {formData.nickname || "Người dùng"}
               </h1>
               {user.role === "Admin" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-danger/10 border border-danger/20 text-danger text-xs font-bold shadow-sm">
-                  <Shield className="w-3.5 h-3.5" /> Quản trị viên
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "2px 10px", borderRadius: "999px", background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)", color: "white", fontSize: "11px", fontWeight: 700 }}>
+                  <Shield className="w-3 h-3" /> Quản trị viên
                 </span>
               )}
             </div>
-            <p className="text-muted-foreground font-medium flex items-center gap-2 bg-secondary/80 px-4 py-1.5 rounded-full w-fit border border-border/50 text-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
-              </span>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", fontWeight: 500, margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00e676", display: "inline-block", boxShadow: "0 0 6px #00e676" }}></span>
               {user.email}
             </p>
           </div>
