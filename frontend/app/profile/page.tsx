@@ -80,46 +80,63 @@ export default function ProfilePage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in pb-20">
       
       {/* Premium Header/Banner */}
-      <div className="mb-12">
-        <div className="h-56 sm:h-72 w-full rounded-3xl bg-gradient-to-br from-primary via-accent to-blue-600 animate-gradient relative overflow-hidden shadow-xl border border-white/10">
-          {/* Decorative patterns */}
-          <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
+      <div className="mb-8" style={{ paddingBottom: "80px", position: "relative" }}>
+        {/* Banner */}
+        <div className="w-full rounded-3xl bg-gradient-to-br from-primary via-accent to-blue-600 animate-gradient relative overflow-hidden shadow-xl border border-white/10" style={{ height: "200px" }}>
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/95"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
         </div>
-        
-        {/* Avatar & Basic Info */}
-        <div className="px-6 sm:px-12 flex flex-col sm:flex-row sm:items-end items-center gap-6 -mt-16 sm:-mt-20 relative z-10">
+
+        {/* Avatar + Info row — sits below banner via absolute bottom */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
+            display: "flex",
+            alignItems: "flex-end",
+            gap: "1.5rem",
+            zIndex: 10,
+          }}
+        >
+          {/* Avatar */}
           <div className="relative group shrink-0">
             <div className="absolute -inset-1.5 bg-gradient-to-r from-primary to-accent rounded-full blur-md opacity-70 group-hover:opacity-100 transition duration-500 animate-pulse-glow"></div>
-            <div className="relative flex h-32 w-32 sm:h-40 sm:w-40 items-center justify-center rounded-full bg-card border-4 border-background shadow-2xl overflow-hidden">
-              <img 
-                src={lobbyAvatar && lobbyAvatar.includes("dicebear") ? lobbyAvatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${user.nickname || user.email}&backgroundColor=transparent`} 
-                alt="Avatar" 
-                className="w-full h-full object-cover transform transition duration-500 hover:scale-110"
+            <div
+              className="relative flex items-center justify-center rounded-full bg-card overflow-hidden shadow-2xl"
+              style={{ width: "120px", height: "120px", border: "4px solid var(--background)" }}
+            >
+              <img
+                src={lobbyAvatar && lobbyAvatar.includes("dicebear") ? lobbyAvatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${user.nickname || user.email}&backgroundColor=transparent`}
+                alt="Avatar"
+                className="w-full h-full object-cover"
               />
             </div>
-            <button className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 p-2 bg-primary text-white rounded-full shadow-lg hover:bg-accent transition-colors border-2 border-background">
-              <Edit3 className="w-4 h-4" />
+            <button className="absolute bottom-1 right-1 p-2 bg-primary text-white rounded-full shadow-lg hover:bg-accent transition-colors border-2 border-background">
+              <Edit3 className="w-3.5 h-3.5" />
             </button>
           </div>
-          
-          <div className="pb-0 sm:pb-3 text-center sm:text-left flex-1 w-full mt-4 sm:mt-0">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground drop-shadow-md tracking-tight">
+
+          {/* Name + email */}
+          <div style={{ paddingBottom: "8px", flex: 1 }}>
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
                 {formData.nickname || "Người dùng"}
               </h1>
               {user.role === "Admin" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-danger/10 border border-danger/20 text-danger text-xs font-bold w-fit mx-auto sm:mx-0 shadow-sm">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-danger/10 border border-danger/20 text-danger text-xs font-bold shadow-sm">
                   <Shield className="w-3.5 h-3.5" /> Quản trị viên
                 </span>
               )}
             </div>
-            <p className="text-muted-foreground font-medium flex items-center justify-center sm:justify-start gap-2 bg-secondary/80 backdrop-blur-md px-4 py-1.5 rounded-full w-fit mx-auto sm:mx-0 shadow-sm border border-border/50">
-              <span className="relative flex h-2.5 w-2.5">
+            <p className="text-muted-foreground font-medium flex items-center gap-2 bg-secondary/80 px-4 py-1.5 rounded-full w-fit border border-border/50 text-sm">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-success shadow-[0_0_8px_rgba(0,200,83,0.8)]"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
               </span>
               {user.email}
             </p>
