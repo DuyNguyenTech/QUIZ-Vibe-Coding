@@ -48,13 +48,12 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     try
     {
-        dbContext.Database.Migrate();
+        dbContext.Database.EnsureCreated();
     }
     catch (Exception ex)
     {
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogWarning(ex, "Migration failed, attempting to ensure database is created...");
-        dbContext.Database.EnsureCreated();
+        logger.LogWarning(ex, "Failed to ensure database is created.");
     }
 }
 

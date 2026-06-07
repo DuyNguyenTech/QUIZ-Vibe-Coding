@@ -15,6 +15,7 @@ export interface QuestionDetail {
   optionB: string;
   optionC: string;
   optionD: string;
+  correctAnswer: string;
 }
 
 export interface ExamDetail {

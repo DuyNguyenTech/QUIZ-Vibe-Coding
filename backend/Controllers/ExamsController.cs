@@ -150,7 +150,8 @@ public class ExamsController : ControllerBase
                 OptionA = q.OptionA,
                 OptionB = q.OptionB,
                 OptionC = q.OptionC,
-                OptionD = q.OptionD
+                OptionD = q.OptionD,
+                CorrectAnswer = q.CorrectAnswer
             }).ToList()
         };
 
