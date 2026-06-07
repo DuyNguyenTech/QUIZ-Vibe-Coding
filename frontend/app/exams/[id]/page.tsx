@@ -18,6 +18,7 @@ import {
   BarChart3,
   ArrowDown,
   PartyPopper,
+  BookOpen,
 } from "lucide-react";
 import { getExam, type ExamDetail } from "../../lib/api";
 import { useQuizStore, useAuthStore } from "../../lib/store";
