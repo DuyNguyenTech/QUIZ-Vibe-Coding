@@ -53,7 +53,7 @@ export const useQuizStore = create<QuizState>()(
         })),
 
       setSubmitted: (val) => set({ isSubmitted: val }),
-      
+
       startExam: () => set({ isStarted: true }),
 
       initExam: (examId, totalQuestions, minutesPerQuestion = 1.5) => {
@@ -96,7 +96,6 @@ export const useQuizStore = create<QuizState>()(
         isStarted: state.isStarted,
       }),
     }
-    }
   )
 );
 
@@ -112,7 +111,7 @@ export interface UserProfile {
 interface AuthState {
   token: string | null;
   user: UserProfile | null;
-  
+
   // Guest/Lobby state
   lobbyNickname: string;
   lobbyAvatar: string;
@@ -132,14 +131,14 @@ export const useAuthStore = create<AuthState>()(
       lobbyAvatar: "/avatars/avatar1.png",
 
       setAuth: (token, user) => set({ token, user }),
-      
+
       updateUser: (updates) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updates } : null,
         })),
 
       logout: () => set({ token: null, user: null }),
-      
+
       setLobbyInfo: (nickname, avatar) => set({ lobbyNickname: nickname, lobbyAvatar: avatar }),
     }),
     {
