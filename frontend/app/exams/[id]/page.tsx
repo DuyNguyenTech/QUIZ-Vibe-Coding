@@ -6,6 +6,7 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
+  Send,
   Loader2,
   AlertCircle,
   Trophy,
@@ -30,6 +31,7 @@ export default function ExamPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const summaryRef = useRef<HTMLDivElement | null>(null);
@@ -221,13 +223,14 @@ export default function ExamPage() {
     );
   }
 
-  // Time-up view (submitted by timeout, not all answered)
+  // Submitted view (manual submit or time-up, not all answered)
   if (isSubmitted && !scoreResult?.allAnswered) {
     return (
-      <TimeUpView
+      <SubmittedView
         exam={exam}
         scoreResult={scoreResult!}
         onRetake={handleRetake}
+        reason={timeRemaining === 0 ? "timeout" : "manual"}
       />
     );
   }
@@ -256,6 +259,45 @@ export default function ExamPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
+      {/* Confirm submit modal */}
+      {showConfirmSubmit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-4">
+          <div className="glass-card p-8 max-w-sm w-full animate-fade-in text-center">
+            <Send className="w-12 h-12 text-primary mx-auto mb-4" />
+            <h3 className="text-xl font-bold mb-2">Nộp bài thi?</h3>
+            <p className="text-muted-foreground text-sm mb-2">
+              Bạn đã trả lời <span className="font-bold text-foreground">{answeredCount}/{exam.questions.length}</span> câu hỏi.
+            </p>
+            {answeredCount < exam.questions.length && (
+              <p className="text-amber-400 text-sm mb-4">
+                ⚠️ Còn {exam.questions.length - answeredCount} câu chưa trả lời sẽ tính là sai.
+              </p>
+            )}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowConfirmSubmit(false)}
+                className="btn-secondary flex-1 justify-center"
+              >
+                Quay lại
+              </button>
+              <button
+                onClick={() => {
+                  setShowConfirmSubmit(false);
+                  setSubmitted(true);
+                  if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                    timerRef.current = null;
+                  }
+                }}
+                className="btn-primary flex-1 justify-center"
+              >
+                Nộp bài
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto max-w-7xl px-4 py-6">
         {/* Top Bar */}
         <div className="glass-card p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -280,6 +322,16 @@ export default function ExamPage() {
               <Clock className="w-5 h-5" />
               {scoreResult?.allAnswered ? "Hoàn thành!" : formatTime(timeRemaining)}
             </div>
+            {/* Submit button - always visible */}
+            {!scoreResult?.allAnswered && (
+              <button
+                onClick={() => setShowConfirmSubmit(true)}
+                className="btn-primary"
+              >
+                <Send className="w-4 h-4" />
+                <span className="hidden sm:inline">Nộp bài</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -730,32 +782,49 @@ function ScoreBoard({
   );
 }
 
-// ─── Time Up View — shown when timer runs out before answering all ──────
+// ─── Submitted View — shown when manually submitting or time runs out ──────
 
-function TimeUpView({
+function SubmittedView({
   exam,
   scoreResult,
   onRetake,
+  reason,
 }: {
   exam: ExamDetail;
   scoreResult: ScoreData;
   onRetake: () => void;
+  reason: "timeout" | "manual";
 }) {
   const router = useRouter();
+
+  const title = reason === "timeout" ? "Hết giờ!" : "Đã nộp bài!";
+  const emoji = reason === "timeout" ? "⏰" : "📋";
+
+  const getScoreGrade = () => {
+    if (scoreResult.scorePercentage >= 90)
+      return { color: "from-amber-400 to-yellow-500" };
+    if (scoreResult.scorePercentage >= 70)
+      return { color: "from-emerald-400 to-teal-500" };
+    if (scoreResult.scorePercentage >= 50)
+      return { color: "from-blue-400 to-indigo-500" };
+    return { color: "from-orange-400 to-rose-500" };
+  };
+
+  const grade = getScoreGrade();
 
   return (
     <div className="min-h-[calc(100vh-4rem)] py-12 px-4">
       <div className="mx-auto max-w-3xl">
-        {/* Time up notice */}
+        {/* Score notice */}
         <div className="score-card mb-8 animate-slide-up">
-          <div className="text-6xl mb-4">⏰</div>
-          <h2 className="text-3xl font-extrabold mb-2">Hết giờ!</h2>
+          <div className="text-6xl mb-4">{emoji}</div>
+          <h2 className="text-3xl font-extrabold mb-2">{title}</h2>
           <p className="text-muted-foreground mb-6">
             Bạn đã trả lời {scoreResult.answeredCount}/{scoreResult.totalQuestions} câu hỏi
           </p>
 
           <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="text-6xl font-black bg-gradient-to-r from-orange-400 to-rose-500 bg-clip-text text-transparent">
+            <div className={`text-6xl font-black bg-gradient-to-r ${grade.color} bg-clip-text text-transparent`}>
               {scoreResult.scorePercentage}%
             </div>
           </div>
