@@ -15,7 +15,7 @@ export default function ProfilePage() {
     gender: "",
     status: "",
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
@@ -78,7 +78,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in pb-20">
-      
+
       {/* Premium Header/Banner */}
       <div className="mb-8" style={{ paddingBottom: "80px", position: "relative" }}>
         {/* Banner */}
@@ -149,12 +149,12 @@ export default function ProfilePage() {
         <div className="md:col-span-4 space-y-6">
           <div className="glass-card p-6 overflow-hidden relative group">
             <div className="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
-            
+
             <h3 className="flex items-center gap-2 font-bold text-foreground mb-6 text-lg relative z-10">
               <Activity className="w-5 h-5 text-primary" />
               Tổng quan
             </h3>
-            
+
             <div className="space-y-4 text-sm relative z-10">
               <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/30 transition-colors">
                 <div className="flex items-center gap-3 text-muted-foreground">
@@ -167,7 +167,7 @@ export default function ProfilePage() {
                   {user.role === "Admin" ? "Quản trị viên" : "Học viên"}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/30 transition-colors">
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <div className="p-2 rounded-lg bg-accent/10 text-accent">
@@ -199,7 +199,7 @@ export default function ProfilePage() {
         <div className="md:col-span-8">
           <div className="glass-card p-6 sm:p-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors"></div>
-            
+
             <div className="flex items-center justify-between mb-8 relative z-10">
               <h3 className="flex items-center gap-2 font-bold text-foreground text-xl">
                 <Settings className="w-6 h-6 text-primary" />
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                 <p className="text-sm font-semibold">{successMsg}</p>
               </div>
             )}
-            
+
             {errorMsg && (
               <div className="mb-8 p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-center gap-3 text-danger animate-fade-in shadow-sm">
                 <div className="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center font-bold text-xs shrink-0">!</div>
