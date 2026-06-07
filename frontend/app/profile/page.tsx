@@ -7,7 +7,7 @@ import { User, Settings, Save, Loader2, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
-  const { token, user, updateUser } = useAuthStore();
+  const { token, user, updateUser, lobbyAvatar } = useAuthStore();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -76,8 +76,12 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in">
       <div className="mb-8 flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-2xl font-bold text-white shadow-lg">
-          {user.nickname ? user.nickname[0].toUpperCase() : user.email[0].toUpperCase()}
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary border-2 border-primary/20 shadow-lg overflow-hidden">
+          <img 
+            src={lobbyAvatar && lobbyAvatar.includes("dicebear") ? lobbyAvatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${user.nickname || user.email}&backgroundColor=transparent`} 
+            alt="Avatar" 
+            className="w-full h-full object-cover"
+          />
         </div>
         <div>
           <h1 className="text-3xl font-bold text-foreground">Hồ sơ cá nhân</h1>

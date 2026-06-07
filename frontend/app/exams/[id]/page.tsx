@@ -320,18 +320,32 @@ export default function ExamPage() {
       <div className="mx-auto max-w-7xl px-4 py-6">
         {/* Top Bar */}
         <div className="glass-card p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold truncate">{exam.title}</h1>
-            <p className="text-sm text-muted-foreground">
-              Câu {currentQuestion + 1} / {exam.questions.length} •{" "}
-              Đã trả lời: {answeredCount}/{exam.questions.length}
-              {scoreResult && answeredCount > 0 && (
-                <span className="ml-2">
-                  • Đúng: <span className="text-success font-semibold">{scoreResult.correctCount}</span>
-                  {" "}Sai: <span className="text-danger font-semibold">{scoreResult.wrongCount}</span>
-                </span>
-              )}
-            </p>
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            {/* User Identity */}
+            <div className="hidden sm:flex items-center gap-2 pr-4 border-r border-border">
+              <img 
+                src={lobbyAvatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${user?.nickname || user?.email || 'quiz'}&backgroundColor=transparent`} 
+                alt="Avatar" 
+                className="w-10 h-10 rounded-full border-2 border-primary/20 bg-secondary/50"
+              />
+              <span className="font-semibold text-sm max-w-[100px] truncate">
+                {lobbyNickname || user?.nickname || user?.email.split('@')[0]}
+              </span>
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg font-bold truncate">{exam.title}</h1>
+              <p className="text-sm text-muted-foreground">
+                Câu {currentQuestion + 1} / {exam.questions.length} •{" "}
+                Đã trả lời: {answeredCount}/{exam.questions.length}
+                {scoreResult && answeredCount > 0 && (
+                  <span className="ml-2">
+                    • Đúng: <span className="text-success font-semibold">{scoreResult.correctCount}</span>
+                    {" "}Sai: <span className="text-danger font-semibold">{scoreResult.wrongCount}</span>
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             {/* Timer */}

@@ -16,7 +16,7 @@ export default function Navbar() {
     { href: "/exams", label: "Danh sách đề", icon: BookOpen },
   ];
 
-  const { token, user, logout } = useAuthStore();
+  const { token, user, logout, lobbyAvatar } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -69,8 +69,12 @@ export default function Navbar() {
                       href="/profile"
                       className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium hover:bg-secondary transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                        {user.nickname ? user.nickname[0].toUpperCase() : user.email[0].toUpperCase()}
+                      <div className="w-8 h-8 rounded-full bg-secondary border border-primary/20 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={lobbyAvatar && lobbyAvatar.includes("dicebear") ? lobbyAvatar : `https://api.dicebear.com/7.x/bottts/svg?seed=${user.nickname || user.email}&backgroundColor=transparent`} 
+                          alt="Avatar" 
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <span className="hidden sm:inline">{user.nickname || user.email.split("@")[0]}</span>
                     </Link>
